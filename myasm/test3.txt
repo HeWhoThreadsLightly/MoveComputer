@@ -1,0 +1,61 @@
+#comment on first line
+
+reset: 	#print hello world
+	A A #noop first instruction to avoid UB during reset
+	zero =	S+5
+	
+	
+	
+	#load constants
+	LOAD 0	B zero
+	PCSr RAND	#set higer bytes of PCtmp to zero by loading current addres
+	
+	#BCD print current value
+	bcd  = S+16
+	
+	bcd8 = bcd
+	bcd7 = bcd+1
+	bcd6 = bcd+2
+	bcd5 = bcd+3
+	bcd4 = bcd+4
+	
+	bcd3 = bcd+5
+	bcd2 = bcd+6
+	bcd1 = bcd+7
+	bcd0 = bcd+8
+	
+	bcdLoopCount = bcd+9
+	LOAD 255	
+	B bcd8
+	zero bcd7
+	zero bcd6
+	zero bcd5
+	zero bcd4
+	zero bcd3
+	zero bcd2
+	zero bcd1
+	B bcd0
+	
+begin:	#load a new value in to n
+
+	
+	
+	#print the result
+	zero E
+	bcd8 A	LOAD 4	LSR A	E S	zero E	LOAD ord("0")	ADD TTY	S A	ADD TTY
+	bcd7 A	LOAD 4	LSR A	E S	zero E	LOAD ord("0")	ADD TTY	S A	ADD TTY
+	bcd6 A	LOAD 4	LSR A	E S	zero E	LOAD ord("0")	ADD TTY	S A	ADD TTY
+	bcd5 A	LOAD 4	LSR A	E S	zero E	LOAD ord("0")	ADD TTY	S A	ADD TTY
+	bcd4 A	LOAD 4	LSR A	E S	zero E	LOAD ord("0")	ADD TTY	S A	ADD TTY
+	
+	LOAD ord("\n")	B TTY
+	
+	LOAD begin	B PC0
+	JMPr RAND
+	
+
+
+
+
+
+

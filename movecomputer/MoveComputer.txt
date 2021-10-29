@@ -1,0 +1,256 @@
+SIC
+Singel*InstructionComputer
+instructions length 16 bits format is two 8 bit pointers (*from)(*to) uncondtionaly copies the value at *from to *to
+*(29)(value) move immediate literarl in to B usin IO module
+
+CPU move core memory map
+0x00 - 0x1f ALU2
+0x00	A register
+0x01	B register
+0x02	E register
+0x03	Random number generator
+0x04	A + B carry(E) (updates E reminder)
+0x05	A - B carry(E) (updates E reminder)
+0x06	A * B carry(E) unsigned (updates E unsigned reminder)
+0x07	A / B carry(E) unsigned (updates E unsigned reminder)
+0x08	A * B carry(E) 2compliment (updates E 2compliment reminder)
+0x09	A / B carry(E) 2compliment (updates E 2compliment reminder)
+0x0a	
+0x0b	
+0x0c
+0x0d
+0x0e	evaluate !A as boolian
+0x10	Find low 1 in A (updates E sets low bit if A contains set bits)
+0x11	Find high 1 in A (updates E sets low bit if A contains set bits)
+0x12	Find low 0 in A (updates E sets low bit if A contains clear bits)
+0x13	Find high 0 in A (updates E sets low bit if A contains clear bits)
+0x14	Rotate A left B steps 
+0x15	Rotate A right B steps
+0x16	Logical A left B steps (updates E with bit shifted off)
+0x17	Logical A right B steps (updates E with bit shifted off)
+0x18	Arithmetic A right B steps
+0x19	Count bits set in A
+0x1a	Unsigned comparison		0b(A>B)(A=B)(A<B)
+0x1b	2compliment comparison	0b(A>B)(A=B)(A<B)
+0x1c	A and B
+0x1d	A or B
+0x1e	A xor B
+0x1f	Not A
+
+0x00 - 0x1f ALU3
+0x00	A register
+0x01	B register
+0x02	E register
+0x03	Random number generator
+0x04	A + B carry(E) (updates E reminder)
+0x05	A + 1 carry(E) (updates E reminder)
+0x06	A - B carry(E) (updates E reminder)
+0x07	A - 1 carry(E) (updates E reminder)
+0x08	A * B carry(E) unsigned (updates E unsigned reminder)
+0x09	A * B carry(E) 2compliment (updates E 2compliment reminder)
+0x0a	step of A / B carry(E) unsigned (updates E reminder) run eight times save E run one more time for result	
+0x0b	
+0x0c
+0x0d
+0x0e
+0x0f	
+0x10	Find high 1 in A
+0x11	Find low 1 in A
+0x12	Find high 0 in A
+0x13	Find low 0 in A
+0x14	Rotate A left B steps 
+0x15	Rotate A right B steps
+0x16	Logical AE left B steps (updates E with bit shifted off)
+0x17	Logical EA right B steps (updates E with bit shifted off)
+0x18	Arithmetic A right B steps
+0x19	Count bits set in A
+0x1a	comparison result anded with E
+		0b(s A<B)(s A>B)(u A<B)(u A>B)(0 unused)(A has set bits)(A has clear bits)(A=B)
+0x1b	BCDaccelerator A is 2 packed BCD digits E has a carry eatch nibble is compaired to the high byte of B and the lower nibble of B is added to it if it is larger than B result is shifted up with carry in E
+0x1c	A and B
+0x1d	A or B
+0x1e	A xor B
+0x1f	Not A
+
+0x20 - 0x27 Program counter
+0x20	PCtmp low byte
+0x21	PCtmp 2 byte
+0x22	PCtmp 3 byte
+0x23	PCtmp high byte
+0x24	Relative jump amount
+0x25W	Conditional relative jump on non zero
+0x25R	Reset PC to 0x00000000
+0x26W	Unconditional relative jump with value
+0x26R	Copy PC to PCtmp
+0x27W	Conditional long jump to PCtmp on non zero
+0x27R	Unconditional long jump to PCtmp
+
+0x28 - 0x7f IO reserved
+0x28	TTY
+0x29	Read immediate literarl in to B
+
+0x80 - 0xff scratch pad ram
+
+
+Program memory map
+0x80 - 0x83 value
+0x84 = 7 jump over add 3 in BCD
+0x85 = 0x84 long jump back in BCD
+0x86 = 32
+0x87 = 1
+0x88 = 0
+0x89 = 21 jump over n/2
+0x8a = 0x5a jump to reset
+0x8b = 0x62 jump to main loop
+0x90 - 0x9e BCD buffer
+
+#clear screan and print the string Hello world!\n using immediate loads
+29 ff 01 28 29 48 01 28 29 65 01 28 29 6c 01 28 29 6c 01 28 29 6f 01 28 29 20 01 28 29 77 01 28 29 6f 01 28 29 72 01 28 29 6c 01 28 29 64 01 28 29 21 01 28 29 0a 01 28
+#load common values in to ram for later reffrence
+29 07 01 84
+29 84 01 85
+29 20 01 86
+29 01 01 87
+29 00 01 88 
+29 5a 01 8a 
+29 15 01 89
+29 62 01 8b 
+#save the PC effectivli setting 3 high bytes to 0
+26 03
+#reset 0x0000005a
+#pick a random starting value 0x0000xxxx
+88 80 88 81 03 82 03 83
+#main loop 0x00000062
+
+#BCD convert TODO
+#clear high bytes
+88 90 88 91 88 92 88 93 88 94 88 95 88 96 88 97 88 99 88 9a
+#copy value
+80 9b 81 9c 82 9d 83 9e
+#copy loop counter and set jump sizes
+86 9f 84 24 85 20
+#BCD loop
+88 02
+#print 'A'
+29 41 01 28
+#add 3 to any values >=5
+90 00 29 04 1a 00 1c 25 90 00 29 03 04 90
+91 00 29 04 1a 00 1c 25 91 00 29 03 04 91
+92 00 29 04 1a 00 1c 25 92 00 29 03 04 92
+93 00 29 04 1a 00 1c 25 93 00 29 03 04 93
+94 00 29 04 1a 00 1c 25 94 00 29 03 04 94
+95 00 29 04 1a 00 1c 25 95 00 29 03 04 95
+96 00 29 04 1a 00 1c 25 96 00 29 03 04 96
+97 00 29 04 1a 00 1c 25 97 00 29 03 04 97
+98 00 29 04 1a 00 1c 25 98 00 29 03 04 98
+99 00 29 04 1a 00 1c 25 99 00 29 03 04 99
+9a 00 29 04 1a 00 1c 25 9a 00 29 03 04 9a
+#shift up all bits
+#print 'U'
+29 55 01 28
+#clear carry and set B to 1 for binary bytes
+88 02 29 01
+#shift up binary bytes
+9e 00 16 9e
+9d 00 16 9d
+9c 00 16 9c
+9b 00 16 9b
+#print 'C'
+29 43 01 28
+#shift up carry
+02 00 29 03 16 02
+#set B to 4 for decimal bytes
+29 04
+#shift decimal bytes
+9a 00 16 9a
+99 00 16 99
+98 00 16 98
+97 00 16 97
+96 00 16 96
+95 00 16 95
+94 00 16 94
+93 00 16 93
+92 00 16 92
+91 00 16 91
+90 00 16 90
+#print 'D'
+29 44 01 28
+#clear carry and set B to 3
+88 02 29 03
+#shift bits back down
+9a 00 17 9a
+99 00 17 99
+98 00 17 98
+97 00 17 97
+96 00 17 96
+95 00 17 95
+94 00 17 94
+93 00 17 93
+92 00 17 92
+91 00 17 91
+90 00 17 90
+#print 'L'
+29 4c 01 28
+#loop
+88 02 29 01 9f 00 05 9f 9f 27
+#add '0' to all bytes and print
+29 30
+90 00 04 28
+91 00 04 28
+92 00 04 28
+93 00 04 28
+94 00 04 28
+95 00 04 28
+96 00 04 28
+97 00 04 28
+98 00 04 28
+99 00 04 28
+9a 00 04 28
+#print newline
+29 0a 01 28
+#test if value is equal to 1
+#using xor value with 0x0001 and adding up all the bits so i onley have to do one compare
+83 00 87 01 1e 00 88 01 19 00 04 01
+80 00 19 00 04 01
+81 00 19 00 04 01
+82 00 19 00 04 00
+#jump to pick a random value if zero
+8a 20 0e 27
+#preform 3n+1 or n/2 logic
+#prepare for long jump back
+8b 20
+#test if lowest bit is set
+83 00 87 01 89 24 1c 25
+#it was even n/2 by bit shift
+#clear carry and B was set to 1 earlier
+88 02
+#shift bits starting with high byte
+80 00 17 80
+81 00 17 81
+82 00 17 82
+83 00 17 83
+#carry is now clear as original values lowest bit was 0
+#jump to main loop
+27 03
+#20 byte offset
+#it was odd 3n+1
+#copy value
+80 90 81 91 82 92 83 93
+#set carry
+87 02
+#first adding
+83 00 93 01 04 83
+82 00 92 01 04 82
+81 00 91 01 04 81
+80 00 90 01 04 80
+#clear carry
+88 02
+#second adding
+83 00 93 01 04 83
+82 00 92 01 04 82
+81 00 91 01 04 81
+80 00 90 01 04 80
+#jump to main loop
+27 03
+
+

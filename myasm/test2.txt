@@ -1,0 +1,50 @@
+	zero =	S+5
+	#load constants
+	LOAD 0
+	B zero
+	PCSr RAND	#set higer bytes of PCtmp to zero by loading current addres
+	
+	#test functionality
+	LSLtest = S+0x12
+	LSLctest = S+0x18
+	BCDaStest = S+0x1e
+	BCDaLtest = S+0x24
+	
+	#test Load
+	#LOAD 0 B S
+	#LOAD 1 B S+1
+	#LOAD 2 B S+2
+	#LOAD 3 B S+3
+	#LOAD 4 B S+4
+	
+	LOAD 0b10000011 B A
+	A LSLtest
+	LOAD 1
+	zero E
+	E LSLtest+1
+	LSL LSLtest+2	#test LSL with clear carry
+	E LSLtest+3
+	
+	LOAD 0b10000011 B A
+	A LSLctest
+	LOAD 1
+	B E
+	E LSLctest+1
+	LSL LSLctest+2	#test LSL with set carry
+	E LSLctest+3
+	
+	LOAD 0b01110011 B A
+	A BCDaStest
+	zero E
+	LOAD 0x43
+	E BCDaStest+1
+	BCDa BCDaStest+2	#test BCDa with clear carry
+	E BCDaStest+3
+	
+	LOAD 0b01110011 B A
+	A BCDaLtest
+	zero E
+	LOAD 0x43
+	E BCDaLtest+1
+	BCDa BCDaLtest+2	#test BCDa with set carry
+	E BCDaLtest+3

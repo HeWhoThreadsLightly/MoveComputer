@@ -1,0 +1,14 @@
+using default output file
+Input file is " test.txt
+Output file is " test.asm
+reading line 1
+Line(n=1, line='#comment on first line', comment='comment on first line', code=None, byte=None, asm='')
+reading line 2
+Line(n=2, line='', comment=None, code=None, byte=None, asm='')
+reading line 3
+Line(n=3, line='reset: \t04 00 #read a random number in to A', comment='read a random number in to A', code=None, byte=None, asm='')
+added lable Label(n=3, name='reset', addr=0)
+starting loop 6  	04 00 
+is literal or string'  	04 00  '
+<re.Match object; span=(0, 2), match=' \t'>
+removing whitespace
