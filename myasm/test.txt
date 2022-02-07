@@ -1,6 +1,6 @@
 #comment on first line
 
-reset: 	#print hello world
+reset: 	#print Collatz conjecture
 	A A #noop first instruction to avoid UB during reset
 	LOAD 0xff		B TTY
 	LOAD ord("C")	B TTY
